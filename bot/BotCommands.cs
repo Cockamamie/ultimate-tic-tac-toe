@@ -1,4 +1,4 @@
 ﻿namespace bot
 {
-    public record Move(V Destination) : BotCommand;
+    public record Move(int row, int column) : BotCommand;
 }
