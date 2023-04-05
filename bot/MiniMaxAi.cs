@@ -9,7 +9,10 @@ namespace bot
         public int GetMove(Board board)
         {
             if (board.GetMoves().Count() == 9)
-                return 4;
+                // too often lets enemy take global board center,
+                // the most important one imo
+                //return 4;
+                return new Random().Next(8);
             AiPlayer = board.CurrentPlayer;
             var bestScore = int.MinValue;
             var bestMove = -1;

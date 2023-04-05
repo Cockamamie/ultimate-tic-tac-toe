@@ -10,6 +10,7 @@ namespace bot
         private int o; // bitmask of Os
 
         public int CurrentPlayer { get; set; } = 0;
+        public List<int> MoveExceptions => new();
 
         public Board() : this(0, 0)
         {
@@ -51,7 +52,7 @@ namespace bot
         {
             if (GetWinner() != -1) yield break;
             for (int move = 0; move < 9; move++)
-                if (this[move] == ' ') yield return move;
+                if (!MoveExceptions.Contains(move) && this[move] == ' ') yield return move;
         }
 
         public override string ToString()

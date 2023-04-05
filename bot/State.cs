@@ -22,7 +22,7 @@ namespace bot
         public void Update(int opponentRow, int opponentColumn, IEnumerable<(int Row, int Column)> availableMoves)
         {
             DefinePlayerSide();
-            UpdateLocalBoard(opponentRow, opponentColumn);
+            UpdateBoards(opponentRow, opponentColumn);
             PlayableLocalBoardIndexes.Clear();
             foreach (var availableMove in availableMoves)
             {
@@ -33,13 +33,23 @@ namespace bot
             }
         }
 
-        private void UpdateLocalBoard(int opponentRow, int opponentColumn)
+        private void UpdateBoards(int opponentRow, int opponentColumn)
         {
             var localBoardIndex = GetLocalBoardIndex(opponentRow, opponentColumn);
             var localBoard = LocalBoards[localBoardIndex];
             localBoard.CurrentPlayer = EnemyAiPlayer;
             var localBoardCellNumber = opponentRow % 3 * 3 + opponentColumn % 3;
             localBoard.ApplyMove(localBoardCellNumber);
+            if (localBoard.IsFinished)
+            {
+                var winner = localBoard.GetWinner();
+                if (winner == -1)
+                    GlobalBoard.MoveExceptions.Add(localBoardIndex);
+                var previousCurrentPlayer = GlobalBoard.CurrentPlayer;
+                GlobalBoard.CurrentPlayer = winner;
+                GlobalBoard.ApplyMove(localBoardIndex);
+                GlobalBoard.CurrentPlayer = previousCurrentPlayer;
+            }
         }
 
         private static int GetLocalBoardIndex(int row, int column) => row / 3 * 3 + column / 3;

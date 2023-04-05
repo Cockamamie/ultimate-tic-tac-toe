@@ -13,6 +13,16 @@ namespace bot
             localBoard.CurrentPlayer = state.AiPlayer;
             var move = ai.GetMove(localBoard); // TODO: selection isn't based on other boards state including global board, just tries to win on current board
             localBoard.ApplyMove(move);
+            if (localBoard.IsFinished)
+            {
+                var winner = localBoard.GetWinner();
+                if (winner == -1)
+                    state.GlobalBoard.MoveExceptions.Add(localBoardToPlayIndex);
+                var previousCurrentPlayer = state.GlobalBoard.CurrentPlayer;
+                state.GlobalBoard.CurrentPlayer = winner;
+                state.GlobalBoard.ApplyMove(localBoardToPlayIndex);
+                state.GlobalBoard.CurrentPlayer = previousCurrentPlayer;
+            }
             var cell = GetCellPosition(localBoardToPlayIndex, move);
             return new Move(cell.row, cell.column) {Message = $"{cell.row} {cell.column}"};
         }
