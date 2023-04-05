@@ -37,7 +37,12 @@ namespace bot
             
             var scores = board
                 .GetMoves()
-                .Select(move => MiniMax(board.Clone(), move, depth + 1))
+                .Select(move =>
+                {
+                    var boardCopy = board.Clone();
+                    boardCopy.CurrentPlayer = boardCopy.CurrentPlayer == 0 ? 1 : 0;
+                    return MiniMax(boardCopy, move, depth + 1);
+                })
                 .ToList();
 
             return board.CurrentPlayer == AiPlayer

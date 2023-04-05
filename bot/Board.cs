@@ -9,8 +9,7 @@ namespace bot
         private int x; // bitmask of Xs
         private int o; // bitmask of Os
 
-        // PopCount - counts 1-bits in number
-        public int CurrentPlayer => (BitOperations.PopCount((uint)x) + BitOperations.PopCount((uint)o)) & 1;
+        public int CurrentPlayer { get; set; } = 0;
 
         public Board() : this(0, 0)
         {
