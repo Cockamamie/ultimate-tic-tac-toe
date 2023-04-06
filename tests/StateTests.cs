@@ -1,32 +1,33 @@
-﻿// using System;
-// using NUnit.Framework;
-//
-// namespace bot
-// {
-//     [TestFixture]
-//     public class StateTests
-//     {
-//         /*
-//          * Как отлаживать алгоритм:
-//          *
-//          * ConsoleReader после каждого хода пишет в отладочный вывод весь ввод, в котором для удобства
-//          * переводы строк заменены на "|". Получается одна строка, которую удобно скопировать из интерфейса CG
-//          * и вставить в этот тест. Аналогично поступить с инизиализационными данными, которые вводятся до первого хода.
-//          *
-//          * Если в интерфейсе CG видно, как ваш алгоритм делает странный ход, можно быстро скопировать входные данные,
-//          * вставить в этот тест, и тем самым повторить проблему в контролируемых условиях.
-//          * Дальше можно отлаживать проблему привычными способами в IDE.     
-//          */
-//         [TestCase("Some|init|data", "Some input|copy pasted from|error stream")]
-//         public void Solve(string initInput, string stepInput)
-//         {
-//             var reader = new ConsoleReader(initInput + "|" + stepInput);
-//             var state = reader.ReadState();
-//             Console.WriteLine(state);
-//
-//             var solver = new Solver();
-//             var move = solver.GetCommand(state, int.MaxValue);
-//             Console.WriteLine(move);
-//         }
-//     }
-// }
+﻿using System;
+using NUnit.Framework;
+
+namespace bot
+{
+    [TestFixture]
+    public class StateTests
+    {
+        /*
+         * Как отлаживать алгоритм:
+         *
+         * ConsoleReader после каждого хода пишет в отладочный вывод весь ввод, в котором для удобства
+         * переводы строк заменены на "|". Получается одна строка, которую удобно скопировать из интерфейса CG
+         * и вставить в этот тест. Аналогично поступить с инизиализационными данными, которые вводятся до первого хода.
+         *
+         * Если в интерфейсе CG видно, как ваш алгоритм делает странный ход, можно быстро скопировать входные данные,
+         * вставить в этот тест, и тем самым повторить проблему в контролируемых условиях.
+         * Дальше можно отлаживать проблему привычными способами в IDE.     
+         */
+        [TestCase("-1 -1|81|3 2|8 7|7 0|4 3|4 2|8 2|6 0|1 4|6 2|4 8|7 7|3 3|1 6|1 1|3 7|2 1|5 4|3 5|1 3|4 6|7 2|5 3|5 7|6 8|4 4|3 4|5 5|6 5|2 6|2 8|4 0|0 1|3 0|4 7|8 0|6 1|7 5|6 3|0 8|5 0|2 0|8 6|5 6|8 8|7 4|0 2|1 0|8 4|1 8|4 5|0 5|5 8|1 5|4 1|3 8|8 1|0 3|2 7|0 6|3 1|8 3|2 4|6 6|0 0|7 3|5 2|3 6|6 4|7 6|0 4|7 8|2 3|7 1|5 1|0 7|1 7|6 7|2 5|1 2|2 2|8 5")]
+        public void Solve(string stepInput)
+        {
+            var state = new State();
+            var reader = new ConsoleReader(stepInput);
+            reader.ReadState(state);
+            Console.WriteLine(state);
+
+            var solver = new Solver();
+            var move = solver.GetCommand(state, int.MaxValue);
+            Console.WriteLine(move);
+        }
+    }
+}

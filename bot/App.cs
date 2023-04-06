@@ -16,11 +16,10 @@ namespace bot
             while (true)
             {
                 reader.ReadState(state);
-                var timer = new Countdown(first ? 500 : 50); //TODO fix timeouts
+                var timer = new Countdown(first ? 1000 : 100);
                 reader.FlushToStdErr();
                 var command = solver.GetCommand(state, timer);
-                Console.WriteLine(command.Message);
-                // Console.WriteLine(command);
+                Console.WriteLine(command);
                 Console.Error.WriteLine(timer);
                 first = false;
             }

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace bot
 {
@@ -9,7 +9,6 @@ namespace bot
         private int x; // bitmask of Xs
         private int o; // bitmask of Os
 
-        public int CurrentPlayer { get; set; } = 0;
         public List<int> MoveExceptions => new();
 
         public Board() : this(0, 0)
@@ -27,8 +26,7 @@ namespace bot
             return new Board(x, o);
         }
 
-        public static int CoordinatesToCellNumber(int row, int col) => row * 3 + col;
-        public char this[int row, int col] => this[CoordinatesToCellNumber(row, col)];
+        public char this[int row, int col] => this[row * 3 + col];
         public char this[int move]
         {
             get
@@ -42,16 +40,20 @@ namespace bot
 
         public bool IsFinished => !GetMoves().Any();
 
-        internal void ApplyMove(int move)
+        internal void ApplyMove(int move, int player)
         {
-            if (CurrentPlayer == 0) x |= (1 << move);
-            else o |= (1 << move);
+            if (player == 0)
+                x |= (1 << move);
+            else if
+                (player == 1) o |= (1 << move);
+            else
+                throw new ArgumentException($"Invalid player number: [{player}]");
         }
 
         public IEnumerable<int> GetMoves()
         {
             if (GetWinner() != -1) yield break;
-            for (int move = 0; move < 9; move++)
+            for (var move = 0; move < 9; move++)
                 if (!MoveExceptions.Contains(move) && this[move] == ' ') yield return move;
         }
 

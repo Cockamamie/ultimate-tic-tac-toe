@@ -31,10 +31,9 @@ namespace bot
                 commandName = commandName.Substring(0, commandName.Length - 7); //"Command".Length
 
             var commandParams = GetParamGetters(commandName).Select(get => get(this));
-            var parts = commandParams.Prepend(commandName.ToUpper());
             if (!string.IsNullOrWhiteSpace(Message))
-                parts = parts.Append(Message);
-            return parts.StrJoin(" ");
+                commandParams = commandParams.Append(Message);
+            return commandParams.StrJoin(" ");
         }
 
         private Func<object, object>[] GetParamGetters(string commandName)

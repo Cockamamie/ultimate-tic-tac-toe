@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace bot
@@ -15,7 +16,7 @@ namespace bot
 
         public List<Board> LocalBoards { get; }
         public Board GlobalBoard { get; }
-        public List<int> PlayableLocalBoardIndexes { get; }
+        public List<int> PlayableLocalBoardIndexes { get; } //TODO: rewrite via Board.GetMoves()
         public int AiPlayer { get; private set; }
         public int EnemyAiPlayer => AiPlayer == 0 ? 1 : 0;
 
@@ -37,19 +38,20 @@ namespace bot
         {
             var localBoardIndex = GetLocalBoardIndex(opponentRow, opponentColumn);
             var localBoard = LocalBoards[localBoardIndex];
-            localBoard.CurrentPlayer = EnemyAiPlayer;
             var localBoardCellNumber = opponentRow % 3 * 3 + opponentColumn % 3;
-            localBoard.ApplyMove(localBoardCellNumber);
-            if (localBoard.IsFinished)
-            {
-                var winner = localBoard.GetWinner();
-                if (winner == -1)
-                    GlobalBoard.MoveExceptions.Add(localBoardIndex);
-                var previousCurrentPlayer = GlobalBoard.CurrentPlayer;
-                GlobalBoard.CurrentPlayer = winner;
-                GlobalBoard.ApplyMove(localBoardIndex);
-                GlobalBoard.CurrentPlayer = previousCurrentPlayer;
-            }
+            localBoard.ApplyMove(localBoardCellNumber, EnemyAiPlayer);
+            UpdateGlobalBoardIfNeeded(localBoardIndex);
+        }
+
+        public void UpdateGlobalBoardIfNeeded(int localBoardIndex)
+        {
+            var localBoard = LocalBoards[localBoardIndex];
+            if (!localBoard.IsFinished) 
+                return;
+            var boardWinner = localBoard.GetWinner();
+            if (boardWinner == -1)
+                GlobalBoard.MoveExceptions.Add(localBoardIndex);
+            GlobalBoard.ApplyMove(localBoardIndex, boardWinner);
         }
 
         private static int GetLocalBoardIndex(int row, int column) => row / 3 * 3 + column / 3;
@@ -58,11 +60,10 @@ namespace bot
         {
             if (AiPlayer != -1)
                 return;
-            var madeMovesCount = LocalBoards.Sum(board => board.GetMoves().Count());
-            if (madeMovesCount == 0)
-                AiPlayer = 0;
-            if (madeMovesCount == 1)
-                AiPlayer = 1;
+            var maxAvailableMoves = 81;
+            var madeMovesCount = maxAvailableMoves - LocalBoards.Sum(board => board.GetMoves().Count());
+            AiPlayer = madeMovesCount % 2;
+            Console.Error.WriteLine($"AiPlayer = {AiPlayer} because moves made = {madeMovesCount}");
         }
     }
 }
