@@ -14,7 +14,7 @@ namespace bot
                 var singleMove = state.PlayableLocalBoardIndexes.First();
                 return singleMove;
             }
-            var move = miniMaxAi.GetMove(state.GlobalBoard, state.AiPlayer, 3);
+            var move = miniMaxAi.GetMove(state.GlobalBoard, state.AiPlayer, 4);
             Console.Error.WriteLine($"Chosen local board is {move}");
             return move;
         }
